@@ -16,10 +16,15 @@
 
 .DEFAULT_GOAL := docker-image
 
-IMAGE ?= stackrox/admission-controller-webhook-demo:latest
+IMAGE ?= kh/admission-controller-webhook-demo:latest
+
+.PHONY: setup
+setup:
+	go mod init admission-controller \
+		&& go mod vendor
 
 image/webhook-server: $(shell find . -name '*.go')
-	CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o $@ ./cmd/webhook-server
+	CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o $@ ./webhook-server
 
 .PHONY: docker-image
 docker-image: image/webhook-server
@@ -28,3 +33,7 @@ docker-image: image/webhook-server
 .PHONY: push-image
 push-image: docker-image
 	docker push $(IMAGE)
+
+.PHONY: clean
+clean:
+	rm image/webhook-server
