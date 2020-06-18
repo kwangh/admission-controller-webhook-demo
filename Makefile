@@ -17,14 +17,13 @@
 
 .DEFAULT_GOAL := docker-build
 
-IMAGE ?= kh/admission-controller-webhook-demo:latest
+IMAGE ?= mm9139/admission-controller-webhook-demo:latest
 
 .PHONY: setup
 ## setup: setup go modules
 setup:
 	go mod init admission-controller \
-		&& go mod tidy \
-		&& go mod vendor
+		&& go mod tidy
 
 ## make: build webhook server and docker image
 image/webhook-server: $(shell find . -name '*.go')
@@ -35,6 +34,7 @@ docker-build: image/webhook-server
 	docker build -t $(IMAGE) image/
 
 .PHONY: docker-push
+## docker-push: pushes the docker image
 docker-push: docker-build
 	docker push $(IMAGE)
 
