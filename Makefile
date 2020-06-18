@@ -12,28 +12,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# https://danishpraka.sh/2019/12/07/using-makefiles-for-go.html
 # Makefile for building the Admission Controller webhook demo server + docker image.
 
-.DEFAULT_GOAL := docker-image
+.DEFAULT_GOAL := docker-build
 
 IMAGE ?= kh/admission-controller-webhook-demo:latest
 
 .PHONY: setup
+## setup: setup go modules
 setup:
 	go mod init admission-controller \
+		&& go mod tidy \
 		&& go mod vendor
 
+## make: build webhook server and docker image
 image/webhook-server: $(shell find . -name '*.go')
 	CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o $@ ./webhook-server
 
-.PHONY: docker-image
-docker-image: image/webhook-server
+.PHONY: docker-build
+docker-build: image/webhook-server
 	docker build -t $(IMAGE) image/
 
-.PHONY: push-image
-push-image: docker-image
+.PHONY: docker-push
+docker-push: docker-build
 	docker push $(IMAGE)
 
 .PHONY: clean
+## clean: cleans the binary
 clean:
 	rm image/webhook-server
+
+.PHONY: help
+## help: Prints this help message
+help:
+	@echo "Usage: \n"
+	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/ /'
