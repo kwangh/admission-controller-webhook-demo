@@ -90,8 +90,10 @@ but runAsUser set to 0 (the root user)
 
 ## Build the Image from Sources (optional)
 
-Start setup by 'make setup'
+Start setup by 'make setup'.
+
 After setup an image can be built by running `make`.
+
 If you want to modify the webhook server for testing purposes, be sure to set and export
 the shell environment variable `IMAGE` to an image tag for which you have push access. You can then
 build and push the image by running `make push-image`. Also make sure to change the image tag
