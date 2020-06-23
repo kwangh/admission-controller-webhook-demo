@@ -24,4 +24,10 @@ kubectl delete namespace webhook-demo
 echo "Deleting the Mutating Webhook Configuration ..."
 kubectl delete MutatingWebhookConfiguration demo-webhook
 
-echo "The webhook server has been deployed and configured!"
+echo "The webhook server and MutatingWebhookConfiguration have been deleted!"
+
+kubectl delete -f examples/pod-with-conflict.yaml
+kubectl delete -f examples/pod-with-defaults.yaml
+kubectl delete -f examples/pod-with-override.yaml
+
+echo "example pods deleted!"
